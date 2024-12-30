@@ -1,0 +1,18 @@
+<apex:page Controller="CandidateSummaryListController">
+    <apex:pageBlock>
+        <apex:pageBlockTable value="{!candidateDataWrapperList}" var="Candidate">
+            <apex:column value="{!Candidate.CandidateRecord.Full_Name__c}" headervalue="Full Name" />
+            <apex:column value="{!Candidate.CandidateRecord.LinkedIn_URL__c}" headervalue="LinkedIn" />
+            <apex:column value="{!Candidate.CandidateRecord.Trailblazer_URL__c}" headervalue="Trailblazer" />
+            <apex:column value="{!Candidate.CandidateRecord.Overall_Rating__c}" headervalue="Overall Rating" />
+            <apex:column value="{!Candidate.CandidateRecord.Total_Certifications__c}" headervalue="Total Certifications" />
+            <apex:column value="{!Candidate.CandidateRecord.Total_Evaluated_Days__c}" headervalue="Total Evaluated Days" />
+            <apex:column value="{!Candidate.TopSkillWithRating}" headervalue="Top Skill(s) with Rating" />
+            <apex:column value="{!Candidate.TaskLastWorkedon}" headervalue="Task Last Worked On" />
+            <apex:column value="{!Candidate.EvaluationStatus}" headervalue="Evaluation Status" />
+
+
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+
+</apex:page>
