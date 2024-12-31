@@ -1,29 +1,32 @@
 public class CandidateSummaryListController {
-    
+        
     public class CandidateDataWrapper {
         // Wrapper class properties
         public String TopSkillWithRating { get; set; }
         public String EvaluationStatus { get; set; }
-        public Id TaskLastWorkedon { get; set; }
+        public Id TaskLastWorkedonId { get; set; }
         public candidate__c CandidateRecord { get; set; }
+        public string TaskLastWorkedName { get; set; }
 
         // Constructor to initialize the wrapper object
-        public CandidateDataWrapper(String TopSkillWithRating, Id TaskLastWorkedon, String EvaluationStatus,candidate__c CandidateRecord) {
+        public CandidateDataWrapper(String TopSkillWithRating, Id TaskLastWorkedonId, String EvaluationStatus,candidate__c CandidateRecord, String  TaskLastWorkedName) {
             this.TopSkillWithRating = TopSkillWithRating;
-            this.TaskLastWorkedon = TaskLastWorkedon;
+            this.TaskLastWorkedonId = TaskLastWorkedonId;
             this.EvaluationStatus = EvaluationStatus;
-             this.CandidateRecord = CandidateRecord;       
+            this.CandidateRecord = CandidateRecord;   
+            this.TaskLastWorkedName = TaskLastWorkedName;    
         }
     }
 
     public List<CandidateDataWrapper> candidateDataWrapperList { get; set; }
 
     public CandidateSummaryListController() {
+        
         candidateDataWrapperList = new List<CandidateDataWrapper>();  // Initialize the list
 
-        List<Candidate__c> candList = [SELECT Id, Full_Name__c, LinkedIn_URL__c, Trailblazer_URL__c, Overall_Rating__c, Total_Certifications__c, Top_Skills_s_with_Rating__c, Total_Evaluated_Days__c,
+        List<Candidate__c> candList = [SELECT Id, Full_Name__c, LinkedIn_URL__c, Trailblazer_URL__c, Overall_Rating__c, Total_Certifications__c, Top_Skills_s_with_Rating__c, Total_Evaluated_Days__c,Total_Skills__c,
                                             (SELECT Id, name,Skill__r.name, Expertise__c FROM Candidate_Skill_Junction__r ORDER BY Expertise__c DESC), 
-                                            (SELECT Id, Evaluation_Task__c, Submission_Date__c FROM Daily_Status__r ORDER BY Submission_Date__c DESC) 
+                                            (SELECT Id, Evaluation_Task__c,Evaluation_Task__r.Name, Submission_Date__c FROM Daily_Status__r ORDER BY Submission_Date__c DESC) 
                                         FROM Candidate__c];
 
         for (Candidate__c cand : candList) {
@@ -47,9 +50,11 @@ public class CandidateSummaryListController {
             }
 
             // Ensure task list is not null before accessing
-            Id TaskLastWorkedon = null;
+            Id TaskLastWorkedonId = null;
+            String TaskLastWorkedName = '';
             if (cand.Daily_Status__r != null && !cand.Daily_Status__r.isEmpty()) {
-                TaskLastWorkedon = cand.Daily_Status__r[0].Evaluation_Task__c;
+                TaskLastWorkedonId = cand.Daily_Status__r[0].Evaluation_Task__c;
+                TaskLastWorkedName = cand.Daily_Status__r[0].Evaluation_Task__r.Name;
             }
 
             
@@ -64,7 +69,7 @@ public class CandidateSummaryListController {
             }
         }
             // Create and add the wrapper data
-            CandidateDataWrapper candData = new CandidateDataWrapper(skillWithRating, TaskLastWorkedon, EvaluationStatus,cand);
+            CandidateDataWrapper candData = new CandidateDataWrapper(skillWithRating, TaskLastWorkedonId, EvaluationStatus,cand,TaskLastWorkedName);
             candidateDataWrapperList.add(candData);
         }
     }
